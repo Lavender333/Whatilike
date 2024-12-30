@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiered Items</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #eef2ff, #e0e7ff);
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      background: linear-gradient(to right, #dbeafe, #bfdbfe, #a5b4fc);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .header h1 {
+      font-size: 2rem;
+      margin: 0;
+      color: #1e3a8a;
+    }
+    .header p {
+      color: #475569;
+      margin-top: 5px;
+    }
+    .tier {
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .tier-love {
+      background: linear-gradient(to bottom right, #fef3c7, #fde68a);
+      border-left: 5px solid #f59e0b;
+    }
+    .tier-loveGood {
+      background: linear-gradient(to bottom right, #d1fae5, #6ee7b7);
+      border-left: 5px solid #10b981;
+    }
+    .tier-goodNotLove {
+      background: linear-gradient(to bottom right, #ede9fe, #c4b5fd);
+      border-left: 5px solid #8b5cf6;
+    }
+    .tier-notLove {
+      background: linear-gradient(to bottom right, #ffe4e6, #fda4af);
+      border-left: 5px solid #f43f5e;
+    }
+    .tier h3 {
+      margin: 0 0 10px;
+      color: #1e293b;
+    }
+    .tier ul {
+      list-style: none;
+      padding: 0;
+    }
+    .tier ul li {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      margin: 5px 0;
+      background: white;
+      border-radius: 5px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    .add-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .add-item input, .add-item select, .add-item button {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .add-item button {
+      background: linear-gradient(to right, #60a5fa, #3b82f6);
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+    .add-item button:hover {
+      background: linear-gradient(to right, #3b82f6, #2563eb);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>My Tiered Items</h1>
+      <p>A peaceful space to organize your thoughts and items.</p>
+    </div>
+    <form class="add-item" onsubmit="addItem(event)">
+      <input type="text" id="newItem" placeholder="Enter a new item..." />
+      <select id="tierSelect">
+        <option value="love">Absolute Love</option>
+        <option value="loveGood">Love & Good Decision</option>
+        <option value="goodNotLove">Good Decision, Don’t Love</option>
+        <option value="notLove">Don’t Love</option>
+      </select>
+      <button type="submit">Add Item</button>
+    </form>
+    <div id="tiers"></div>
+  </div>
+
+  <script>
+    const tiers = {
+      love: [],
+      loveGood: [],
+      goodNotLove: [],
+      notLove: [],
+    };
+
+    const tierClasses = {
+      love: "tier-love",
+      loveGood: "tier-loveGood",
+      goodNotLove: "tier-goodNotLove",
+      notLove: "tier-notLove",
+    };
+
+    const tierTitles = {
+      love: "Absolute Love",
+      loveGood: "Love & Good Decision",
+      goodNotLove: "Good Decision, Don’t Love",
+      notLove: "Don’t Love",
+    };
+
+    function renderTiers() {
+      const tiersContainer = document.getElementById("tiers");
+      tiersContainer.innerHTML = "";
+
+      for (const [tierId, items] of Object.entries(tiers)) {
+        const tierDiv = document.createElement("div");
+        tierDiv.className = `tier ${tierClasses[tierId]}`;
+        tierDiv.innerHTML = `<h3>${tierTitles[tierId]} (${items.length})</h3>`;
+        
+        const ul = document.createElement("ul");
+        items.forEach((item, index) => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+            <span>${item}</span>
+            <button onclick="removeItem('${tierId}', ${index})">×</button>
+          `;
+          ul.appendChild(li);
+        });
+
+        if (items.length === 0) {
+          ul.innerHTML = `<p style="color: #aaa; font-style: italic;">No items yet. Add some!</p>`;
+        }
+
+        tierDiv.appendChild(ul);
+        tiersContainer.appendChild(tierDiv);
+      }
+    }
+
+    function addItem(event) {
+      event.preventDefault();
+      const newItem = document.getElementById("newItem").value.trim();
+      const selectedTier = document.getElementById("tierSelect").value;
+
+      if (newItem) {
+        tiers[selectedTier].push(newItem);
+        document.getElementById("newItem").value = "";
+        renderTiers();
+      }
+    }
+
+    function removeItem(tier, index) {
+      tiers[tier].splice(index, 1);
+      renderTiers();
+    }
+
+    renderTiers();
+  </script>
+</body>
+</html>
+
